@@ -1,0 +1,17 @@
+{
+  "name": "unlox-social-media-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Week 07 full-stack social media app for Unlox.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace client",
+    "dev:client": "npm run dev --workspace client",
+    "dev:server": "npm run dev --workspace server",
+    "build": "npm run build --workspace client",
+    "start": "npm run start --workspace server"
+  }
+}
