@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import morgan from "morgan";
+import path from "path";
 import { env } from "./config/env.js";
 import healthRoutes from "./routes/health.routes.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -19,6 +20,7 @@ app.use(
 );
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
+app.use("/uploads", express.static(path.resolve("uploads")));
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);

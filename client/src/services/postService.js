@@ -28,3 +28,13 @@ export async function unlikePost(postId) {
   const { data } = await api.delete(`/posts/${postId}/like`);
   return data.post;
 }
+
+export async function addComment(postId, text) {
+  const { data } = await api.post(`/posts/${postId}/comments`, { text });
+  return data.post;
+}
+
+export async function deleteComment(postId, commentId) {
+  const { data } = await api.delete(`/posts/${postId}/comments/${commentId}`);
+  return data.post;
+}

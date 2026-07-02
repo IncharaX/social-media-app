@@ -2,6 +2,7 @@ import React from "react";
 import { Bell, Home, LogIn, LogOut, UserRound } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../services/AuthContext.jsx";
+import { Avatar } from "./Avatar.jsx";
 import { StatusPill } from "./StatusPill.jsx";
 
 const baseNavItems = [
@@ -57,7 +58,7 @@ export function AppLayout() {
         <div className="sidebar-footer">
           {user ? (
             <div className="mini-user">
-              <div className="avatar">{user.name.charAt(0).toUpperCase()}</div>
+              <Avatar name={user.name} src={user.avatarUrl} size="sm" />
               <div>
                 <strong>{user.name}</strong>
                 <p>{user.email}</p>

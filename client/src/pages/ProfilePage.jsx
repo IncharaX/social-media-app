@@ -1,8 +1,9 @@
 import React from "react";
-import { CalendarDays, Check, Edit3, Mail, MapPin, Newspaper, X } from "lucide-react";
+import { CalendarDays, Check, Edit3, ImagePlus, Mail, MapPin, Newspaper, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Avatar } from "../components/Avatar.jsx";
 import { useAuth } from "../services/AuthContext.jsx";
-import { getProfile, updateProfile } from "../services/userService.js";
+import { getProfile, updateProfile, uploadAvatar } from "../services/userService.js";
 
 function formatJoinDate(value) {
   const date = new Date(value);
@@ -33,6 +34,7 @@ export function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -97,11 +99,46 @@ export function ProfilePage() {
     }
   }
 
+  async function handleAvatarUpload(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    setIsUploadingAvatar(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const updatedUser = await uploadAvatar(file);
+      syncUser(updatedUser);
+      setForm(buildInitialForm(updatedUser));
+      setMessage("Profile picture updated.");
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || "Could not upload profile picture.");
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  }
+
   return (
     <section className="profile-page">
       <form onSubmit={handleSubmit}>
         <div className="profile-header">
-          <div className="profile-avatar">{user.name.charAt(0).toUpperCase()}</div>
+          <div className="profile-avatar-wrap">
+            <Avatar name={user.name} src={user.avatarUrl} size="lg" />
+            {isEditing ? (
+              <label className="avatar-upload-button">
+                <ImagePlus size={16} />
+                {isUploadingAvatar ? "Uploading..." : "Upload"}
+                <input
+                  accept="image/*"
+                  disabled={isUploadingAvatar}
+                  onChange={handleAvatarUpload}
+                  type="file"
+                />
+              </label>
+            ) : null}
+          </div>
           <div>
             <p className="eyebrow">Your profile</p>
             {isEditing ? (
@@ -207,11 +244,11 @@ export function ProfilePage() {
           <span>Posts</span>
         </div>
         <div>
-          <strong>0</strong>
+          <strong>{isLoading ? "..." : stats.followers ?? 0}</strong>
           <span>Followers</span>
         </div>
         <div>
-          <strong>0</strong>
+          <strong>{isLoading ? "..." : stats.following ?? 0}</strong>
           <span>Following</span>
         </div>
       </div>

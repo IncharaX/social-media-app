@@ -4,3 +4,5 @@ dist
 .DS_Store
 npm-debug.log*
 tmp
+server/uploads/*
+!server/uploads/.gitkeep

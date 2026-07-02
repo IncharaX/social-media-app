@@ -2,7 +2,7 @@
 
 A full-stack social media application built for the Unlox Week 07 Minor Project.
 
-The app lets users create an account, log in, manage their profile, create text posts, edit or delete their own posts, and like posts from other users. The project is built with a React frontend, an Express backend, MongoDB for storage, and JWT-based authentication.
+The app lets users create an account, log in, manage their profile, upload a profile picture, create text posts, comment, edit or delete their own posts, like posts, follow other users, and use a real-time chat room. The project is built with a React frontend, an Express backend, MongoDB for storage, JWT-based authentication, multer uploads, and Socket.IO chat.
 
 ## Features
 
@@ -12,11 +12,15 @@ The app lets users create an account, log in, manage their profile, create text 
 - Password hashing with bcrypt
 - Session restore after page refresh
 - User profile view and edit
+- Profile picture file upload
 - Text post creation
 - Feed with author details and timestamps
 - Edit own posts
 - Delete own posts
 - Like and unlike posts
+- Comments system
+- Follow and unfollow users
+- Real-time chat using Socket.IO
 - Loading, empty, success, and error states
 - Responsive layout for desktop, tablet, and mobile
 
@@ -27,6 +31,7 @@ Frontend:
 - React
 - React Router
 - Axios
+- Socket.IO client
 - Vite
 - CSS
 - Lucide React icons
@@ -39,6 +44,8 @@ Backend:
 - Mongoose
 - JWT
 - bcryptjs
+- multer
+- Socket.IO
 
 ## Project Structure
 
@@ -58,8 +65,10 @@ server/
     controllers/
     middleware/
     models/
+    realtime/
     routes/
     utils/
+  uploads/
     app.js
     server.js
 ```
@@ -163,6 +172,9 @@ Login body:
 ```text
 GET   /api/users/me
 PATCH /api/users/me
+POST  /api/users/me/avatar
+POST  /api/users/:id/follow
+DELETE /api/users/:id/follow
 ```
 
 Update profile body:
@@ -176,6 +188,14 @@ Update profile body:
 }
 ```
 
+Profile picture upload:
+
+```text
+Field name: avatar
+Content type: multipart/form-data
+Max size: 2MB
+```
+
 ### Posts
 
 ```text
@@ -186,6 +206,8 @@ PATCH  /api/posts/:id
 DELETE /api/posts/:id
 POST   /api/posts/:id/like
 DELETE /api/posts/:id/like
+POST   /api/posts/:id/comments
+DELETE /api/posts/:id/comments/:commentId
 ```
 
 Create or update post body:
@@ -195,6 +217,27 @@ Create or update post body:
   "description": "Today I connected the feed to the backend."
 }
 ```
+
+Create comment body:
+
+```json
+{
+  "text": "This is a useful post."
+}
+```
+
+### Real-time Chat
+
+The backend attaches a Socket.IO server to the Express HTTP server.
+
+Client events:
+
+```text
+chat:history
+chat:message
+```
+
+Messages are kept in memory for the current server session.
 
 ## Protected Routes
 
@@ -220,4 +263,5 @@ npm run build
 - Do not upload `node_modules`.
 - Keep `.env` private.
 - Include `.env.example` files so the evaluator knows which variables are required.
-- Make sure MongoDB is running before testing authentication, profiles, posts, or likes.
+- Uploaded files are stored in `server/uploads`.
+- Make sure MongoDB is running before testing authentication, profiles, posts, comments, follows, or likes.

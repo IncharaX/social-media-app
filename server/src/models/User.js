@@ -37,7 +37,19 @@ const userSchema = new mongoose.Schema(
     avatarUrl: {
       type: String,
       default: ""
-    }
+    },
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ],
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ]
   },
   {
     timestamps: true
@@ -66,6 +78,8 @@ userSchema.methods.toSafeObject = function toSafeObject() {
     bio: this.bio,
     location: this.location,
     avatarUrl: this.avatarUrl,
+    followingCount: this.following?.length || 0,
+    followersCount: this.followers?.length || 0,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt
   };
